@@ -1,0 +1,54 @@
+name: Super-Linter
+
+on: push
+
+jobs:
+  super-lint:
+    name: Lint code base
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run Super-Linter
+        uses: github/super-linter@v4
+        env: 
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+ It is a GitHub Actions workflow file.
+ It tells GitHub:
+
+    “Whenever someone pushes code to the repository, run the Super-Linter on the code."
+
+
+
+name: Super-Linter	Give this workflow a name ("Super-Linter").
+on: push	Trigger the workflow when someone pushes new code.
+
+jobs:	Start defining the work that needs to be done.
+super-lint:	Name of the job = super-lint.
+
+name: Lint code base	Display name = "Lint code base" (for the dashboard).
+runs-on: ubuntu-latest	Run this job on an Ubuntu Linux machine provided by GitHub
+
+steps:	Now list the steps inside this job.
+- name: Checkout code	First step = Download your code to the runner machine.
+uses: actions/checkout@v2	Use GitHub’s official "checkout" action to download your code.
+
+- name: Run Super-Linter	Second step = Run Super-Linter on the downloaded code.
+uses: github/super-linter@v4	Use the Super-Linter version 4 from GitHub.
+
+env:	Set some environment variables (settings) for the Super-Linter.
+DEFAULT_BRANCH: main	Tell Super-Linter that the default branch is main.
+i.e. if I forgot to mention the name of branch while pushing then it will be automatically
+pushed to the branch mentioned in DEFAULT_BRANCH
+GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}	Give Super-Linter permission to read/write 
+using a secure GitHub token.
+
+Summary
+Code is pushed ➔ GitHub Actions starts running.
+It downloads your repository code.
+It runs Super-Linter on your code to check for errors/style issues.
+It reports if there are any problems with your code (before merging or deploying).
