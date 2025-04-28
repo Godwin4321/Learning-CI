@@ -1,0 +1,129 @@
+name: Let's Face Error
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test: 
+    name: Run Python Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest  # ensure pytest is installed
+
+      - name: Run Tests
+        run: python -m pytest tests/  # run pytest explicitly
+
+
+The purpose of this workflow is to automate the process of running Python tests 
+every time there is a push or pull request to the main branch of the repository. 
+It uses pytest to run the tests.
+
+Is pytest a Package or a Framework?
+Package: In technical terms, pytest is a Python package because it's a collection of 
+Python modules that you can install via pip.
+Framework: It is also a framework because it provides a structure for writing and 
+running tests.
+
+Key Features of pytest
+Automatic Test Discovery:
+By default, pytest will automatically discover tests in any file that starts with 
+test_ or ends with _test.py, and it will automatically detect methods that start 
+with test_ as test cases.
+
+
+
+1. Name of the Workflow:
+name: Let's Face Error
+This sets the name of the workflow. In GitHub Actions, the name appears in the 
+Actions tab of your repository.
+
+2. Event Triggers:
+on:
+  push:
+    branches: [ main ]
+  pull_requests:
+    branches: [ main ]
+This section defines the events that trigger the workflow to run:
+
+    The workflow runs whenever code is pushed to the main branch.
+
+    It also runs when a pull request is opened or updated that targets the main branch.
+
+
+3. Jobs:
+jobs:
+  test: 
+    name: Run Python Tests
+    runs-on: ubuntu-latest
+The job ID (used internally) is test.
+Job Name: Run Python Tests is the label displayed in the GitHub Actions UI 
+Both are related, but the name is more for user-friendly display, 
+while the job ID is for internal reference in the workflow.
+The job will run on an Ubuntu runner (ubuntu-latest), which means the tests 
+will run in a virtual machine running Ubuntu.
+
+4. Steps in the Job:
+    Step a: Checkout Repository:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+When a job runs on GitHub Actions (in this case, the job to run Python tests), it 
+happens in a fresh virtual machine. This virtual machine is like a clean computer that
+doesn't have your repository's code by default.
+
+The actions/checkout action is used to bring in your code from your GitHub repository 
+into that virtual machine. Once the code is checked out (copied), other steps in the 
+workflow (like installing dependencies or running tests) can access and use that code.
+
+
+    Step b: Set up Python:
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+This step uses the actions/setup-python action to install and configure a specific 
+version of Python on the runner. In this case, it's setting up Python 3.10.
+
+    Step c: Install Dependencies
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest  # ensure pytest is installed
+
+The | after run: is a YAML syntax feature that allows you to define a 
+multi-line string. It’s used to write commands or scripts across multiple lines, 
+preserving the line breaks.
+
+Normally, you'd just run pip, but using python -m pip ensures that you're using 
+the pip version that corresponds to the currently active version of Python
+
+Then, it installs the dependencies listed in the requirements.txt file using the 
+pip install -r 
+
+It ensures pytest is installed using pip install pytest
+
+Step 4: Run Tests:
+- name: Run Tests
+  run: python -m pytest tests/  # run pytest explicitly
+
+python -m pytest tests/: This command tells Python to run pytest on the tests/ folder 
+(which is where the test files are located).
+
