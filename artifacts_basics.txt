@@ -1,0 +1,88 @@
+name: Build and Store Aritfacts
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build Project
+        run: |
+          mkdir -p output
+          echo "Hello World!" > output/artifact.txt
+          ls -l output/
+          cat output/artifact.txt
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with: 
+          name: my-artifact
+          path: output/
+
+          // This means:
+
+                Upload whatever is in the output/ folder.
+
+                Store it in GitHub Actions under the name my-artifact.
+
+
+
+  download:
+    runs-on: ubuntu-latest
+    needs: build
+    steps: 
+      - name: Download Artifact from GitHub Actions
+        uses: actions/download-artifact@v4
+        with: 
+          name: my-artifact
+          path: downloaded-artifact
+
+          // This means:
+
+            Download the previously uploaded artifact named my-artifact.
+
+            Save its contents into the folder downloaded-artifact/ (you can name this folder anything).
+
+      - name: Display Artifact Content
+        run: |
+          ls -l downloaded-artifact/
+          cat downloaded-artifact/artifact.txt || echo "File is empty or missing"   
+
+
+
+||  <--- logical or
+
+
+
+
+
+Workflow name is "Build and Store Artifacts"
+This yml file will trigger on push event
+
+There are 2 jobs in this yml file: build & download
+build job will run on Ubuntu runner
+  First step is to download code into my runner
+  mkdir -p output <-- Create the directory only if it doesn’t exist
+  ls -l <-- detailed info about each file or directory
+
+  Second step is Uploading an Artifact to GitHub Actions
+  - name: Upload Artifact
+    uses: actions/upload-artifact@v4   // Uses GitHub's built-in action to handle artifact uploading.
+    with:
+      name: my-artifact  // This is the name you'll use to refer to the artifact later (e.g., during download).
+      path: output/     // This tells the action to upload everything inside the output/ folder.
+
+Uploading the artifact to GitHub's Actions storage, which is a temporary storage space provided by GitHub only for workflow runs.
+
+download job will also run on ubunto runner
+name: my-artifact   <– this must match the name used during the upload step.
+path: downloaded-artifact  <-- my artifact will be downloaded into this folder in my runner
+This is needed because:
+
+    Each job gets a fresh runner (they are isolated VMs).
+
+    So, if Job A builds something and uploads it,
+
+    Job B must download it again to access it — because it’s on a new machine.
